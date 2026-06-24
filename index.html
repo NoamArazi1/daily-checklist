@@ -86,7 +86,7 @@
   <div class="ov" id="ov">
     <div class="ovbox">
       <h3>ייבוא מהיר</h3>
-      <p>הדבק את כל הרשימה פעם אחת. הכלל: <b>שורת שם של חייל</b> (עם מספר אישי), ומתחתיה <b>פריטים שמתחילים במקף</b> (- פריט - מספר). שורת ריק בין אנשים. אחרי הייבוא אפשר לתקן הכל בטבלה.</p>
+      <p>אפשר להדביק את כל ההודעה כמו שהיא — כותרות וסעיפים מיותרים יושמטו אוטומטית. הכלל: <b>שורת חייל</b> = שם + מספר אישי (6 ספרות ומעלה). <b>פריט</b> = שורה שמתחילה במקף (- פריט - מספר צלם). אחרי הייבוא אפשר לתקן הכל בטבלה.</p>
       <textarea id="imp" placeholder="עמית 9999999&#10;- נשק - 1111&#10;- מאג - 1234&#10;- משקפת&#10;&#10;ארזי 8888888&#10;- מאג - 5678&#10;- בורסייט"></textarea>
       <div class="quick" style="padding:10px 0 0">
         <button onclick="closeImport()">ביטול</button>
@@ -231,22 +231,24 @@ function runImport(){
     const t=line.trim();if(!t)continue;
     const isItem=/^[-–—•*]/.test(line);
     const body=t.replace(/^[-–—•*\s]+/,'').trim();
-    const n=body.match(/\d{3,}/g)||[];
-    if(isItem){
-      if(!cur){cur={name:'',pn:'',items:[]};ppl.push(cur)}
-      const serial=n.length?n[n.length-1]:'';
-      let item=body.replace(/\d{3,}/g,'').replace(/\s*[-–—]\s*/g,' ').replace(/\s+/g,' ').trim().replace(/^[\s.\-–—]+/,'').replace(/[\s.\-–—]+$/,'').trim();
+    if(isItem){                                  // שורת פריט — חייבת חייל לפניה
+      if(!cur) continue;
+      const ns=body.match(/\d{4,}/g)||[];
+      const serial=ns.length?ns[ns.length-1]:'';
+      let item=body.replace(/\d{4,}/g,'').replace(/\s*[-–—]\s*/g,' ').replace(/\s+/g,' ').trim().replace(/^[\s.\-–—]+/,'').replace(/[\s.\-–—]+$/,'').trim();
       cur.items.push({item:item||body,serial,reported:false});
-    }else{
-      const pn=n.length?n[n.length-1]:'';
-      const name=body.replace(/\d{3,}/g,'').trim().replace(/[\s.\-–—:]+$/,'').trim();
-      cur={name:name||body,pn,items:[]};ppl.push(cur);
+    }else{                                       // כותרת חייל = יש מספר אישי (6+ ספרות); אחרת רעש
+      const pnm=body.match(/\d{6,}/);
+      if(pnm){
+        const name=body.replace(pnm[0],'').replace(/\d{4,}/g,'').trim().replace(/^[\s.\-–—:]+/,'').replace(/[\s.\-–—:]+$/,'').trim();
+        cur={name:name||body,pn:pnm[0],items:[]};ppl.push(cur);
+      }else{cur=null;}
     }
   }
-  const clean=ppl.filter(p=>p.items.length||p.name);
-  if(!clean.length){toast('לא נמצא מה לייבא');return}
+  const clean=ppl.filter(p=>p.items.length);
+  if(!clean.length){toast('לא נמצאו חיילים לייבא');return}
   people=clean;save();closeImport();renderTable();showTab('table');
-  toast('יובאו '+people.length+' אנשים ✓');
+  toast('יובאו '+people.length+' חיילים ✓');
 }
 
 /* ---------- ניווט/כללי ---------- */
