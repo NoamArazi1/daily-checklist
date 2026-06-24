@@ -26,7 +26,7 @@
   .msg.me{align-self:flex-start;background:var(--me);border-bottom-right-radius:4px}
   .msg.bot{align-self:flex-end;background:var(--bot);border:1px solid var(--line);border-bottom-left-radius:4px}
   .msg .t{display:block;font-size:11px;color:var(--mut);margin-top:6px}
-  .ok{color:var(--accent);font-weight:700}.unk{color:var(--bad);font-weight:700}.who{color:var(--warn);font-weight:700}
+  .ok{color:var(--accent);font-weight:700}.unk{color:var(--bad);font-weight:700}.who{color:var(--warn);font-weight:700}.miss{color:var(--warn);font-weight:700}
   .composer{display:flex;gap:8px;padding:10px;background:var(--panel2);border-top:1px solid var(--line);align-items:flex-end}
   .composer textarea{flex:1;resize:none;min-height:46px;max-height:140px;background:#0b1a1a;color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:16px;font-family:inherit}
   .send{background:var(--accent);color:#04231a;border:none;border-radius:14px;padding:0 18px;height:46px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer}
@@ -111,21 +111,27 @@ function markReport(text){
     (p.name && nameInText(p.name,text))
   );
   const scoped = targets.length ? targets : null;
-  const pool = scoped || people;
-  let fresh=0;
-  for(const p of pool){
-    for(const it of p.items){
-      if(it.reported) continue;
-      let hit=false;
-      if(it.serial) hit=rep.has(it.serial);                 // מספר צלם ייחודי — בטוח גלובלית
-      else if(scoped) hit=nameInText(it.item,text);          // בלי צלם — רק אצל החייל שזוהה
-      if(hit){it.reported=true;fresh++}
+  const summary=[];
+  if(scoped){
+    // דיווח של חייל = התמונה המלאה שלו: מאפסים את כל הפריטים שלו ומסמנים רק את מה שדווח
+    for(const p of scoped){
+      let done=0;
+      for(const it of p.items){
+        const hit = it.serial ? rep.has(it.serial) : nameInText(it.item,text);
+        it.reported = hit;                                  // כן/לא — לפי הדיווח הנוכחי בלבד
+        if(hit) done++;
+      }
+      summary.push({name:p.name||'חייל',done,total:p.items.length});
     }
+  }else{
+    // לא זוהה חייל — לא מאפסים. מסמנים רק לפי מספר צלם שמופיע (בטוח, ייחודי)
+    for(const p of people) for(const it of p.items)
+      if(!it.reported && it.serial && rep.has(it.serial)) it.reported=true;
   }
   const known=new Set(allItems().filter(it=>it.serial).map(it=>it.serial));
   people.forEach(p=>{if(p.pn)known.add(p.pn)});
   const unknown=[...rep].filter(n=>!known.has(n));
-  return {fresh,unknown,targets:scoped?targets.map(p=>p.name||'חייל'):[]};
+  return {scoped:!!scoped,summary,unknown};
 }
 
 /* ---------- צ'אט ---------- */
@@ -141,13 +147,17 @@ function sendReport(){
   const inp=document.getElementById('input');const text=inp.value.trim();if(!text)return;
   if(!allItems().length){addMsg('bot','אין רשימה עדיין. עבור ללשונית <b>טבלה</b> והכנס אנשים ופריטים (או "ייבוא מהיר").');return}
   addMsg('me',escapeHtml(text));inp.value='';inp.style.height='auto';
-  const {fresh,unknown,targets}=markReport(text);save();updateChip();
+  const {scoped,summary,unknown}=markReport(text);save();updateChip();
   const {total,done}=counts();
   let h='';
-  if(targets.length) h+='<span class="who">👤 זוהה: '+targets.map(escapeHtml).join(', ')+'</span><br>';
-  else h+='<span class="unk">⚠️ לא זיהיתי חייל מהדיווח. סומנו רק פריטים לפי מספר צלם. (ודא ששם/מספר אישי מופיעים)</span><br>';
-  h+= fresh?'<span class="ok">✔️ סומנו '+fresh+' פריטים.</span>':'ℹ️ לא נמצא חדש.';
-  h+='<br>סה"כ <b>'+done+'/'+total+'</b> דווחו.';
+  if(scoped){
+    h+=summary.map(s=>'<span class="who">👤 '+escapeHtml(s.name)+'</span>: '
+        +(s.done===s.total?'<span class="ok">':'<span class="miss">')+s.done+'/'+s.total+'</span>'
+        +(s.done===s.total?' ✅':'')).join('<br>');
+  }else{
+    h+='<span class="unk">⚠️ לא זיהיתי חייל מהדיווח. ודא שהוא כולל שם / מספר אישי / מספר צלם של החייל.</span>';
+  }
+  h+='<br>סה"כ <b>'+done+'/'+total+'</b> אצל החיילים.';
   if(unknown.length) h+='<br><span class="unk">⚠️ מספרים שלא ברשימה: '+unknown.slice(0,15).map(escapeHtml).join(', ')+'</span>';
   addMsg('bot',h);renderTable();
 }
