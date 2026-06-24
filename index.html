@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#0f3d3e">
-<title>מעקב נשקים</title>
+<title>מעקב צלם</title>
 <style>
   :root{
     --bg:#0f1a1a; --panel:#132626; --panel2:#0f1f1f;
@@ -30,251 +30,278 @@
     padding:6px 12px;font-size:14px;font-weight:700;white-space:nowrap;
   }
   .chip b{color:var(--accent)}
-  .chip.full b{color:var(--accent)}
   .chip.partial b{color:var(--warn)}
   nav{display:flex;background:var(--panel2);border-bottom:1px solid var(--line)}
   nav button{
     flex:1;background:none;border:none;color:var(--mut);
-    padding:12px;font-size:15px;font-weight:700;font-family:inherit;
+    padding:12px 6px;font-size:15px;font-weight:700;font-family:inherit;
     border-bottom:3px solid transparent;cursor:pointer;
   }
   nav button.on{color:var(--ink);border-bottom-color:var(--accent)}
 
+  .view{flex:1;overflow-y:auto;display:none;flex-direction:column}
+  .view.on{display:flex}
+
   /* ---- צ'אט ---- */
-  #chat{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
-  .msg{max-width:85%;padding:10px 14px;border-radius:16px;line-height:1.5;font-size:15px;white-space:pre-wrap;word-break:break-word}
+  #chat{padding:14px;gap:10px}
+  .msg{max-width:88%;padding:10px 14px;border-radius:16px;line-height:1.5;font-size:15px;white-space:pre-wrap;word-break:break-word}
   .msg.me{align-self:flex-start;background:var(--me);border-bottom-right-radius:4px}
   .msg.bot{align-self:flex-end;background:var(--bot);border:1px solid var(--line);border-bottom-left-radius:4px}
   .msg .t{display:block;font-size:11px;color:var(--mut);margin-top:6px}
-  .msg ul{margin:6px 0 0;padding-inline-start:18px}
   .ok{color:var(--accent);font-weight:700}
-  .miss{color:var(--warn);font-weight:700}
   .unk{color:var(--bad);font-weight:700}
 
-  .composer{
-    display:flex;gap:8px;padding:10px;background:var(--panel2);
-    border-top:1px solid var(--line);align-items:flex-end;
-  }
-  .composer textarea{
-    flex:1;resize:none;min-height:46px;max-height:140px;
-    background:#0b1a1a;color:var(--ink);border:1px solid var(--line);
-    border-radius:14px;padding:12px 14px;font-size:16px;font-family:inherit;
-  }
-  .send{
-    background:var(--accent);color:#04231a;border:none;border-radius:14px;
-    padding:0 18px;height:46px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer;
-  }
+  .composer{display:flex;gap:8px;padding:10px;background:var(--panel2);border-top:1px solid var(--line);align-items:flex-end}
+  .composer textarea{flex:1;resize:none;min-height:46px;max-height:140px;background:#0b1a1a;color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:16px;font-family:inherit}
+  .send{background:var(--accent);color:#04231a;border:none;border-radius:14px;padding:0 18px;height:46px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer}
   .quick{display:flex;gap:8px;padding:0 10px 10px;background:var(--panel2)}
-  .quick button{
-    flex:1;background:#0c2120;color:var(--ink);border:1px solid var(--line);
-    border-radius:12px;padding:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;
-  }
+  .quick button{flex:1;background:#0c2120;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
+
+  /* ---- טבלת מעקב ---- */
+  #track{padding:10px}
+  .tnote{color:var(--mut);font-size:13px;padding:4px 6px 10px;line-height:1.5}
+  .grp{border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden;background:var(--panel2)}
+  .grp .gh{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#14302d;font-weight:800;font-size:16px}
+  .grp .gh .gc{margin-inline-start:auto;font-size:13px;font-weight:700;color:var(--mut)}
+  .grp .gh.full .gc{color:var(--accent)}
+  .unit{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--line);cursor:pointer;font-size:16px}
+  .unit .box{font-size:20px;width:24px;text-align:center;flex:none}
+  .unit.done{background:#10302a}
+  .unit.done .num{color:var(--accent)}
+  .unit .num{flex:1;word-break:break-word;letter-spacing:.3px}
+  .unit .sub{color:var(--mut);font-size:13px}
 
   /* ---- רשימה ---- */
-  #list{flex:1;overflow-y:auto;padding:16px;display:none;flex-direction:column;gap:12px}
+  #list{padding:16px;gap:12px}
   #list p{margin:0;color:var(--mut);font-size:14px;line-height:1.6}
-  #listText{
-    width:100%;min-height:240px;background:#0b1a1a;color:var(--ink);
-    border:1px solid var(--line);border-radius:14px;padding:14px;
-    font-size:16px;font-family:inherit;line-height:1.7;
-  }
+  #listText{width:100%;min-height:260px;background:#0b1a1a;color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:16px;font-family:inherit;line-height:1.8;direction:rtl}
   .row{display:flex;gap:8px}
-  .btn{
-    flex:1;background:var(--accent);color:#04231a;border:none;border-radius:12px;
-    padding:13px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;
-  }
-  .btn.sec{background:#0c2120;color:var(--ink);border:1px solid var(--line)}
+  .btn{flex:1;background:var(--accent);color:#04231a;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer}
   .count{font-size:14px;color:var(--mut);text-align:center}
-  .toast{
-    position:fixed;bottom:80px;left:50%;transform:translateX(-50%);
-    background:#04231a;color:var(--accent);border:1px solid var(--accent);
-    padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;
-    opacity:0;transition:opacity .2s;pointer-events:none;z-index:9;
-  }
+  .toast{position:fixed;bottom:84px;left:50%;transform:translateX(-50%);background:#04231a;color:var(--accent);border:1px solid var(--accent);padding:10px 18px;border-radius:999px;font-weight:700;font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
   .toast.show{opacity:1}
 </style>
 </head>
 <body>
   <header>
-    <h1>🔫 מעקב נשקים</h1>
+    <h1>🎖️ מעקב צלם</h1>
     <div class="chip" id="chip">—</div>
   </header>
 
   <nav>
     <button id="tabChat" class="on" onclick="showTab('chat')">צ'אט</button>
+    <button id="tabTrack" onclick="showTab('track')">טבלה</button>
     <button id="tabList" onclick="showTab('list')">הרשימה</button>
   </nav>
 
-  <!-- צ'אט -->
-  <div id="chat"></div>
-  <div class="quick">
-    <button onclick="askStatus()">📊 מה חסר?</button>
-    <button onclick="newDay()">🔄 יום חדש</button>
-  </div>
-  <div class="composer">
-    <textarea id="input" placeholder="הדבק כאן את הדוח (טקסט עם מספרים)…" rows="1"></textarea>
-    <button class="send" onclick="sendReport()">שלח</button>
+  <div id="chat" class="view on"></div>
+  <div id="track" class="view"></div>
+
+  <div id="list" class="view">
+    <p>רשימת הצלם — <b>פריט אחד בכל שורה</b>, כמו שהיא מגיעה.<br>
+    מספר הצלם = רצף של 3 ספרות ויותר. שני פריטים עם אותו שם (למשל שני מאגים) יקובצו יחד עם שני המספרים.<br>
+    פריט בלי מספר (משקפת/בורסייט) — בלי מספר; מסמנים אותו בלחיצה בטבלה.</p>
+    <textarea id="listText" placeholder="שרף 92578&#10;מאג - 71793&#10;מאג - 71094&#10;מקרון - 2374&#10;משקפת (קטן)&#10;בורסייט"></textarea>
+    <div class="count" id="listCount"></div>
+    <div class="row"><button class="btn" onclick="saveList()">💾 שמור רשימה</button></div>
+    <p>שמירה שומרת על הסימונים הקיימים. ל"יום חדש" (איפוס) — הכפתור בלשונית הצ'אט.</p>
   </div>
 
-  <!-- רשימה -->
-  <div id="list">
-    <p>רשימת מספרי הנשק הקבועה. מספר אחד בכל שורה. כאן מעדכנים אותה מתי שצריך.</p>
-    <textarea id="listText" placeholder="1234567&#10;2345678&#10;3456789"></textarea>
-    <div class="count" id="listCount"></div>
-    <div class="row">
-      <button class="btn" onclick="saveList()">💾 שמור רשימה</button>
-    </div>
-    <p style="margin-top:8px">שמירת רשימה חדשה מאפסת את הסימונים ומתחילה יום חדש.</p>
+  <div class="quick" id="quick">
+    <button onclick="showTab('track')">📋 פתח טבלה</button>
+    <button onclick="newDay()">🔄 יום חדש</button>
+  </div>
+  <div class="composer" id="composer">
+    <textarea id="input" placeholder="הדבק כאן את הדוח (טקסט עם מספרים)…" rows="1"></textarea>
+    <button class="send" onclick="sendReport()">שלח</button>
   </div>
 
   <div class="toast" id="toast"></div>
 
 <script>
-const K={list:'wt_list',rep:'wt_reported',chat:'wt_chat'};
-let weapons = load(K.list, []);
+const HE='֐-׿';
+const K={raw:'tz_raw',rep:'tz_reported',chat:'tz_chat'};
+let rawList = localStorage.getItem(K.raw) || '';
 let reported = new Set(load(K.rep, []));
 let chat = load(K.chat, []);
+let units = buildUnits(rawList);
 
 function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
 function save(){
   try{
-    localStorage.setItem(K.list,JSON.stringify(weapons));
+    localStorage.setItem(K.raw,rawList);
     localStorage.setItem(K.rep,JSON.stringify([...reported]));
     localStorage.setItem(K.chat,JSON.stringify(chat));
-  }catch(e){/* גלישה פרטית / אחסון חסום — ממשיכים בלי שמירה */}
+  }catch(e){}
 }
-function now(){const d=new Date();return d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0')}
+function now(){const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
+function escapeHtml(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
 
-/* ---------- לוגיקת ההשוואה (תואם כל הדפדפנים, בלי lookbehind) ---------- */
-function tokenize(text){
-  return (text.match(/[A-Za-z0-9][A-Za-z0-9\-/]*/g)||[]);
+/* ---------- ניתוח הרשימה ---------- */
+function cleanName(label){
+  let n=label.replace(/\d{3,}/g,' ').replace(/[*]/g,' ');
+  n=n.replace(/[\s\-–—]+/g,' ').trim();
+  n=n.replace(/^[\s.\-–—]+/,'').replace(/[\s.\-–—]+$/,'').trim();
+  return n||label.trim();
 }
-function findInText(text){
-  const toks=new Set(tokenize(text).map(t=>t.toLowerCase()));
-  return weapons.filter(w=>toks.has(w.toLowerCase()));
+// כל פריט -> "יחידות": מספר צלם בודד = יחידה; פריט בלי מספר = יחידה אחת ידנית
+function buildUnits(raw){
+  const out=[];
+  for(let line of raw.split('\n')){
+    const label=line.replace(/^[\s*•\-–—]+/,'').trim();
+    if(!label) continue;
+    const serials=label.match(/\d{3,}/g)||[];
+    const name=cleanName(label);
+    const m=label.match(new RegExp('['+HE+']{2,}'));
+    const matchName=m?m[0]:'';
+    if(serials.length){
+      serials.forEach(s=>out.push({group:name,key:s,num:s,matchName,hasNum:true}));
+    }else{
+      out.push({group:name,key:'x:'+label,num:null,label,matchName,hasNum:false});
+    }
+  }
+  return out;
 }
-function candidates(text){
-  return [...new Set(tokenize(text))];
+
+/* ---------- התאמת דוח ---------- */
+function nameInText(name,text){
+  if(!name) return false;
+  const isL=c=>new RegExp('[A-Za-z0-9'+HE+']').test(c||'');
+  let i=text.indexOf(name);
+  while(i!==-1){
+    if(!isL(text[i-1])&&!isL(text[i+name.length])) return true;
+    i=text.indexOf(name,i+1);
+  }
+  return false;
+}
+function markReport(text){
+  const repNums=new Set(text.match(/\d{3,}/g)||[]);
+  let fresh=0;
+  for(const u of units){
+    if(reported.has(u.key)) continue;
+    const hit = u.hasNum ? repNums.has(u.num) : nameInText(u.matchName,text);
+    if(hit){reported.add(u.key);fresh++}
+  }
+  const known=new Set(units.filter(u=>u.hasNum).map(u=>u.num));
+  const unknown=[...repNums].filter(n=>!known.has(n));
+  return {fresh,unknown};
 }
 
 /* ---------- צ'אט ---------- */
 function addMsg(who,html,store=true){
   const m={who,html,t:now()};
   if(store){chat.push(m);save()}
-  const el=document.createElement('div');
-  el.className='msg '+who;
+  const el=document.createElement('div');el.className='msg '+who;
   el.innerHTML=html+'<span class="t">'+m.t+'</span>';
-  document.getElementById('chat').appendChild(el);
-  scrollDown();
+  document.getElementById('chat').appendChild(el);scrollDown();
 }
 function scrollDown(){const c=document.getElementById('chat');c.scrollTop=c.scrollHeight}
 function renderChat(){
   const c=document.getElementById('chat');c.innerHTML='';
-  for(const m of chat){
-    const el=document.createElement('div');
-    el.className='msg '+m.who;
-    el.innerHTML=m.html+'<span class="t">'+m.t+'</span>';
-    c.appendChild(el);
-  }
+  for(const m of chat){const el=document.createElement('div');el.className='msg '+m.who;el.innerHTML=m.html+'<span class="t">'+m.t+'</span>';c.appendChild(el)}
   scrollDown();
 }
+function doneCount(){return units.filter(u=>reported.has(u.key)).length}
 
 function sendReport(){
-  const inp=document.getElementById('input');
-  const text=inp.value.trim();
+  const inp=document.getElementById('input');const text=inp.value.trim();
   if(!text) return;
-  if(!weapons.length){addMsg('bot','אין רשימה. עבור ללשונית <b>הרשימה</b> והכנס מספרים.');return}
-  addMsg('me',escapeHtml(text));
-  inp.value='';inp.style.height='auto';
-
-  const matched=findInText(text);
-  let fresh=0;
-  for(const w of matched){if(!reported.has(w)){reported.add(w);fresh++}}
-  // מספרים שלא ברשימה (עם ספרה בלבד, להפחתת רעש)
-  const lower=new Set(weapons.map(w=>w.toLowerCase()));
-  const unknown=candidates(text).filter(c=>c.length>=3&&/\d/.test(c)&&!lower.has(c.toLowerCase()));
-  save();updateChip();
-
-  const missing=weapons.filter(w=>!reported.has(w));
-  const done=weapons.length-missing.length;
-  let h = fresh ? '<span class="ok">✔️ נקלטו '+fresh+' חדשים.</span>' : 'ℹ️ לא נמצאו מספרים חדשים בהודעה.';
-  h += '<br>סה"כ דווחו <b>'+done+'/'+weapons.length+'</b>.';
-  if(!missing.length){ h+='<br><span class="ok">✅ הכל דווח!</span>'; }
-  else { h+='<br>נשארו '+missing.length+' (לחץ "מה חסר?").'; }
-  if(unknown.length){ h+='<br><span class="unk">⚠️ דווחו מספרים שלא ברשימה: '+unknown.slice(0,15).map(escapeHtml).join(', ')+'</span>'; }
+  if(!units.length){addMsg('bot','אין רשימה. עבור ללשונית <b>הרשימה</b> והכנס את רשימת הצלם.');return}
+  addMsg('me',escapeHtml(text));inp.value='';inp.style.height='auto';
+  const {fresh,unknown}=markReport(text);save();updateChip();renderTrack();
+  const done=doneCount();
+  let h = fresh ? '<span class="ok">✔️ סומנו '+fresh+' פריטים.</span>' : 'ℹ️ לא נמצא חדש בהודעה.';
+  h += '<br>סה"כ <b>'+done+'/'+units.length+'</b>.';
+  h += (done===units.length) ? '<br><span class="ok">✅ הכל דווח!</span>' : '<br>פתח <b>טבלה</b> לראות מה חסר.';
+  if(unknown.length) h+='<br><span class="unk">⚠️ מספרים שלא ברשימה: '+unknown.slice(0,15).map(escapeHtml).join(', ')+'</span>';
   addMsg('bot',h);
 }
-
-function askStatus(){
-  if(!weapons.length){addMsg('bot','אין רשימה טעונה.');return}
-  const missing=weapons.filter(w=>!reported.has(w));
-  const done=weapons.length-missing.length;
-  if(!missing.length){
-    addMsg('bot','<span class="ok">✅ הכל דווח!</span> כל '+weapons.length+' הנשקים מסומנים.');
-  }else{
-    addMsg('bot','<span class="miss">⚠️ דווחו '+done+' מתוך '+weapons.length+'.</span><br>חסרים '+missing.length+':<ul>'+missing.map(w=>'<li>'+escapeHtml(w)+'</li>').join('')+'</ul>');
-  }
-}
-
 function newDay(){
   if(!confirm('להתחיל יום חדש? כל הסימונים יימחקו (הרשימה נשארת).')) return;
-  reported=new Set();save();updateChip();
-  addMsg('bot','<span class="ok">🔄 יום חדש.</span> ממתין לדיווחים על '+weapons.length+' נשקים.');
+  reported=new Set();save();updateChip();renderTrack();
+  addMsg('bot','<span class="ok">🔄 יום חדש.</span> ממתין לדיווח על '+units.length+' פריטים.');
 }
 
+/* ---------- טבלת מעקב (לפי שם) ---------- */
+function renderTrack(){
+  const box=document.getElementById('track');
+  if(!units.length){box.innerHTML='<div class="tnote">אין רשימה. עבור ללשונית "הרשימה" והכנס את הצלם.</div>';return}
+  // קיבוץ לפי שם, בסדר ההופעה
+  const order=[],map={};
+  units.forEach((u,i)=>{
+    if(!(u.group in map)){map[u.group]=order.length;order.push({name:u.group,rows:[]})}
+    order[map[u.group]].rows.push({u,i});
+  });
+  let html='<div class="tnote">טבלה לפי שם — מתחת לכל שם כל מספרי הצלם שלו. ✅=דווח, ⬜=חסר. לחיצה מסמנת/מבטלת ידנית.<br>סומנו '+doneCount()+' מתוך '+units.length+'.</div>';
+  for(const g of order){
+    const gd=g.rows.filter(r=>reported.has(r.u.key)).length, gt=g.rows.length;
+    html+='<div class="grp"><div class="gh '+(gd===gt?'full':'')+'">'+escapeHtml(g.name)+'<span class="gc">'+gd+'/'+gt+'</span></div>';
+    for(const r of g.rows){
+      const d=reported.has(r.u.key);
+      const txt = r.u.hasNum ? r.u.num : '<span class="sub">ללא מספר — סמן ידנית</span>';
+      html+='<div class="unit '+(d?'done':'')+'" data-i="'+r.i+'"><span class="box">'+(d?'✅':'⬜')+'</span><span class="num">'+txt+'</span></div>';
+    }
+    html+='</div>';
+  }
+  box.innerHTML=html;
+}
+document.getElementById('track').addEventListener('click',e=>{
+  const row=e.target.closest('.unit'); if(!row) return;
+  const u=units[+row.dataset.i]; if(!u) return;
+  if(reported.has(u.key)) reported.delete(u.key); else reported.add(u.key);
+  save();updateChip();renderTrack();
+});
+
 /* ---------- רשימה ---------- */
-function showTab(t){
-  const chatOn=t==='chat';
-  document.getElementById('chat').style.display=chatOn?'flex':'none';
-  document.querySelector('.quick').style.display=chatOn?'flex':'none';
-  document.querySelector('.composer').style.display=chatOn?'flex':'none';
-  document.getElementById('list').style.display=chatOn?'none':'flex';
-  document.getElementById('tabChat').classList.toggle('on',chatOn);
-  document.getElementById('tabList').classList.toggle('on',!chatOn);
-  if(!chatOn){document.getElementById('listText').value=weapons.join('\n');updateListCount()}
-  else scrollDown();
-}
-function updateListCount(){
-  const n=parseList(document.getElementById('listText').value).length;
-  document.getElementById('listCount').textContent=n+' מספרים';
-}
-function parseList(raw){
-  const seen=new Set(),out=[];
-  for(let t of raw.split(/[\s,;]+/)){t=t.trim();if(t&&!seen.has(t)){seen.add(t);out.push(t)}}
-  return out;
-}
+function updateListCount(){document.getElementById('listCount').textContent=buildUnits(document.getElementById('listText').value).length+' פריטים';}
 function saveList(){
-  const newList=parseList(document.getElementById('listText').value);
-  if(!newList.length){toast('הרשימה ריקה');return}
-  weapons=newList;reported=new Set();save();updateChip();
-  toast('נשמרו '+weapons.length+' מספרים ✓');
-  addMsg('bot','<span class="ok">💾 נטענה רשימה:</span> '+weapons.length+' נשקים. הסימונים אופסו.');
-  showTab('chat');
+  rawList=document.getElementById('listText').value;
+  const nu=buildUnits(rawList);
+  if(!nu.length){toast('הרשימה ריקה');return}
+  const keys=new Set(nu.map(u=>u.key));
+  reported=new Set([...reported].filter(k=>keys.has(k)));
+  units=nu;save();updateChip();renderTrack();
+  toast('נשמרו '+units.length+' פריטים ✓');
+  addMsg('bot','<span class="ok">💾 נטענה רשימה:</span> '+units.length+' פריטים.');
+  showTab('track');
+}
+
+/* ---------- ניווט ---------- */
+function showTab(t){
+  document.getElementById('chat').classList.toggle('on',t==='chat');
+  document.getElementById('track').classList.toggle('on',t==='track');
+  document.getElementById('list').classList.toggle('on',t==='list');
+  document.getElementById('tabChat').classList.toggle('on',t==='chat');
+  document.getElementById('tabTrack').classList.toggle('on',t==='track');
+  document.getElementById('tabList').classList.toggle('on',t==='list');
+  const show=t==='chat'?'flex':'none';
+  document.getElementById('quick').style.display=show;
+  document.getElementById('composer').style.display=show;
+  if(t==='track') renderTrack();
+  if(t==='list'){document.getElementById('listText').value=rawList;updateListCount()}
+  if(t==='chat') scrollDown();
 }
 
 /* ---------- כללי ---------- */
 function updateChip(){
   const c=document.getElementById('chip');
-  if(!weapons.length){c.textContent='אין רשימה';c.className='chip';return}
-  const done=weapons.filter(w=>reported.has(w)).length;
-  c.innerHTML='<b>'+done+'</b> / '+weapons.length;
-  c.className='chip '+(done===weapons.length?'full':'partial');
+  if(!units.length){c.textContent='אין רשימה';c.className='chip';return}
+  const done=doneCount();
+  c.innerHTML='<b>'+done+'</b> / '+units.length;
+  c.className='chip '+(done===units.length?'':'partial');
 }
-function escapeHtml(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
 let toastT;
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1800)}
 
-// auto-grow textarea
 const inp=document.getElementById('input');
 inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.min(inp.scrollHeight,140)+'px'});
 document.getElementById('listText').addEventListener('input',updateListCount);
 
-// init
 updateChip();
 if(!chat.length){
-  addMsg('bot','שלום! 👋 הדבק כאן כל דוח שמגיע אליך ואני אסמן וי על המספרים שדווחו.<br>בלשונית <b>הרשימה</b> מגדירים את מספרי הנשק.',true);
+  addMsg('bot','שלום! 👋<br>1. בלשונית <b>הרשימה</b> הכנס את רשימת הצלם (פריט בכל שורה).<br>2. כאן הדבק כל דוח שמגיע — אני מסמן לפי המספרים.<br>3. בלשונית <b>טבלה</b> תראה כל שם עם מספרי הצלם שלו ו-✅/⬜.',true);
 }
-renderChat();
+renderChat();renderTrack();
 </script>
 </body>
 </html>
