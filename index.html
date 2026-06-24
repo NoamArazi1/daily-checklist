@@ -14,35 +14,19 @@
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;height:100%}
-  body{
-    background:var(--bg);color:var(--ink);
-    font-family:-apple-system,"Segoe UI",Roboto,"Heebo",Arial,sans-serif;
-    display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;
-  }
-  header{
-    background:linear-gradient(180deg,#15403c,#0f2e2c);
-    padding:12px 16px;border-bottom:1px solid var(--line);
-    display:flex;align-items:center;gap:12px;
-  }
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,"Segoe UI",Roboto,"Heebo",Arial,sans-serif;display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden}
+  header{background:linear-gradient(180deg,#15403c,#0f2e2c);padding:12px 16px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px}
   header h1{font-size:18px;margin:0;font-weight:700;flex:1}
-  .chip{
-    background:#0c2120;border:1px solid var(--line);border-radius:999px;
-    padding:6px 12px;font-size:14px;font-weight:700;white-space:nowrap;
-  }
+  .chip{background:#0c2120;border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:700;white-space:nowrap}
   .chip b{color:var(--accent)}
   .chip.partial b{color:var(--warn)}
   nav{display:flex;background:var(--panel2);border-bottom:1px solid var(--line)}
-  nav button{
-    flex:1;background:none;border:none;color:var(--mut);
-    padding:12px 6px;font-size:15px;font-weight:700;font-family:inherit;
-    border-bottom:3px solid transparent;cursor:pointer;
-  }
+  nav button{flex:1;background:none;border:none;color:var(--mut);padding:12px 6px;font-size:15px;font-weight:700;font-family:inherit;border-bottom:3px solid transparent;cursor:pointer}
   nav button.on{color:var(--ink);border-bottom-color:var(--accent)}
-
   .view{flex:1;overflow-y:auto;display:none;flex-direction:column}
   .view.on{display:flex}
 
-  /* ---- צ'אט ---- */
+  /* צ'אט */
   #chat{padding:14px;gap:10px}
   .msg{max-width:88%;padding:10px 14px;border-radius:16px;line-height:1.5;font-size:15px;white-space:pre-wrap;word-break:break-word}
   .msg.me{align-self:flex-start;background:var(--me);border-bottom-right-radius:4px}
@@ -50,31 +34,31 @@
   .msg .t{display:block;font-size:11px;color:var(--mut);margin-top:6px}
   .ok{color:var(--accent);font-weight:700}
   .unk{color:var(--bad);font-weight:700}
-
   .composer{display:flex;gap:8px;padding:10px;background:var(--panel2);border-top:1px solid var(--line);align-items:flex-end}
   .composer textarea{flex:1;resize:none;min-height:46px;max-height:140px;background:#0b1a1a;color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:16px;font-family:inherit}
   .send{background:var(--accent);color:#04231a;border:none;border-radius:14px;padding:0 18px;height:46px;font-size:16px;font-weight:800;font-family:inherit;cursor:pointer}
   .quick{display:flex;gap:8px;padding:0 10px 10px;background:var(--panel2)}
   .quick button{flex:1;background:#0c2120;color:var(--ink);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer}
 
-  /* ---- טבלת מעקב ---- */
+  /* טבלה לפי אנשים */
   #track{padding:10px}
   .tnote{color:var(--mut);font-size:13px;padding:4px 6px 10px;line-height:1.5}
   .grp{border:1px solid var(--line);border-radius:14px;margin-bottom:10px;overflow:hidden;background:var(--panel2)}
-  .grp .gh{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#14302d;font-weight:800;font-size:16px}
-  .grp .gh .gc{margin-inline-start:auto;font-size:13px;font-weight:700;color:var(--mut)}
-  .grp .gh.full .gc{color:var(--accent)}
+  .gh{display:flex;align-items:center;gap:8px;padding:11px 14px;background:#14302d;font-weight:800;font-size:17px}
+  .gh .gc{margin-inline-start:auto;font-size:13px;font-weight:700;color:var(--warn)}
+  .gh.full .gc{color:var(--accent)}
   .unit{display:flex;align-items:center;gap:12px;padding:12px 14px;border-top:1px solid var(--line);cursor:pointer;font-size:16px}
-  .unit .box{font-size:20px;width:24px;text-align:center;flex:none}
+  .unit .box{font-size:18px;width:22px;text-align:center;flex:none}
   .unit.done{background:#10302a}
-  .unit.done .num{color:var(--accent)}
-  .unit .num{flex:1;word-break:break-word;letter-spacing:.3px}
-  .unit .sub{color:var(--mut);font-size:13px}
+  .unit.miss .box{color:var(--bad)}
+  .unit .lbl{flex:1;word-break:break-word}
+  .unit.done .lbl{color:var(--accent)}
+  .unit .id{color:var(--mut);font-size:14px;letter-spacing:.3px;direction:ltr}
 
-  /* ---- רשימה ---- */
+  /* רשימה */
   #list{padding:16px;gap:12px}
   #list p{margin:0;color:var(--mut);font-size:14px;line-height:1.6}
-  #listText{width:100%;min-height:260px;background:#0b1a1a;color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:16px;font-family:inherit;line-height:1.8;direction:rtl}
+  #listText{width:100%;min-height:280px;background:#0b1a1a;color:var(--ink);border:1px solid var(--line);border-radius:14px;padding:14px;font-size:16px;font-family:inherit;line-height:1.8;direction:rtl}
   .row{display:flex;gap:8px}
   .btn{flex:1;background:var(--accent);color:#04231a;border:none;border-radius:12px;padding:13px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer}
   .count{font-size:14px;color:var(--mut);text-align:center}
@@ -98,13 +82,14 @@
   <div id="track" class="view"></div>
 
   <div id="list" class="view">
-    <p>רשימת הצלם — <b>פריט אחד בכל שורה</b>, כמו שהיא מגיעה.<br>
-    מספר הצלם = רצף של 3 ספרות ויותר. שני פריטים עם אותו שם (למשל שני מאגים) יקובצו יחד עם שני המספרים.<br>
-    פריט בלי מספר (משקפת/בורסייט) — בלי מספר; מסמנים אותו בלחיצה בטבלה.</p>
-    <textarea id="listText" placeholder="שרף 92578&#10;מאג - 71793&#10;מאג - 71094&#10;מקרון - 2374&#10;משקפת (קטן)&#10;בורסייט"></textarea>
+    <p><b>מבנה הרשימה — לפי אנשים:</b><br>
+    שורת שם של חייל (בלי מקף), ומתחתיה הפריטים שלו — כל פריט בשורה שמתחילה במקף, עם המספר המזהה.<br>
+    פריט בלי מספר (משקפת/בורסייט) — בלי מספר; מסמנים בלחיצה בטבלה.<br>
+    שורת ריק מפרידה בין אנשים.</p>
+    <textarea id="listText" placeholder="עמית&#10;- 0.5 - 11111&#10;- מאג - 22222&#10;- מאג - 33333&#10;- משקפת&#10;&#10;ארזי&#10;- מאג - 44444&#10;- עדי - 55555&#10;- בורסייט"></textarea>
     <div class="count" id="listCount"></div>
     <div class="row"><button class="btn" onclick="saveList()">💾 שמור רשימה</button></div>
-    <p>שמירה שומרת על הסימונים הקיימים. ל"יום חדש" (איפוס) — הכפתור בלשונית הצ'אט.</p>
+    <p>שמירה שומרת על הסימונים הקיימים. ל"יום חדש" (איפוס כל הסימונים) — הכפתור בלשונית הצ'אט.</p>
   </div>
 
   <div class="quick" id="quick">
@@ -112,7 +97,7 @@
     <button onclick="newDay()">🔄 יום חדש</button>
   </div>
   <div class="composer" id="composer">
-    <textarea id="input" placeholder="הדבק כאן את הדוח (טקסט עם מספרים)…" rows="1"></textarea>
+    <textarea id="input" placeholder="הדבק כאן את הדיווח של חייל…" rows="1"></textarea>
     <button class="send" onclick="sendReport()">שלח</button>
   </div>
 
@@ -120,175 +105,155 @@
 
 <script>
 const HE='֐-׿';
+const ITEM_KW=['0.5','מאג','מקרון','משקפת','בורסייט','בורוסייט','עדי','שרף'];
 const K={raw:'tz_raw',rep:'tz_reported',chat:'tz_chat'};
 let rawList = localStorage.getItem(K.raw) || '';
 let reported = new Set(load(K.rep, []));
 let chat = load(K.chat, []);
-let units = buildUnits(rawList);
+let people = buildModel(rawList);
 
 function load(k,d){try{return JSON.parse(localStorage.getItem(k))??d}catch(e){return d}}
-function save(){
-  try{
-    localStorage.setItem(K.raw,rawList);
-    localStorage.setItem(K.rep,JSON.stringify([...reported]));
-    localStorage.setItem(K.chat,JSON.stringify(chat));
-  }catch(e){}
-}
+function save(){try{localStorage.setItem(K.raw,rawList);localStorage.setItem(K.rep,JSON.stringify([...reported]));localStorage.setItem(K.chat,JSON.stringify(chat))}catch(e){}}
 function now(){const d=new Date();return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')}
 function escapeHtml(s){return s.replace(/[&<>]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]))}
 
-/* ---------- ניתוח הרשימה ---------- */
-function cleanName(label){
-  let n=label.replace(/\d{3,}/g,' ').replace(/[*]/g,' ');
-  n=n.replace(/[\s\-–—]+/g,' ').trim();
+/* ---------- ניתוח הרשימה (לפי אנשים) ---------- */
+function cleanLabel(body){
+  let n=body.replace(/\d{4,}/g,' ');
+  n=n.replace(/\s*[-–—]\s*/g,' ').replace(/\s+/g,' ').trim();
   n=n.replace(/^[\s.\-–—]+/,'').replace(/[\s.\-–—]+$/,'').trim();
-  return n||label.trim();
+  return n;
 }
-// כל פריט -> "יחידות": מספר צלם בודד = יחידה; פריט בלי מספר = יחידה אחת ידנית
-function buildUnits(raw){
-  const out=[];
+function buildModel(raw){
+  const people=[]; let cur=null, pn=0;
   for(let line of raw.split('\n')){
-    const label=line.replace(/^[\s*•\-–—]+/,'').trim();
-    if(!label) continue;
-    const serials=label.match(/\d{3,}/g)||[];
-    const name=cleanName(label);
-    const m=label.match(new RegExp('['+HE+']{2,}'));
-    const matchName=m?m[0]:'';
-    if(serials.length){
-      serials.forEach(s=>out.push({group:name,key:s,num:s,matchName,hasNum:true}));
-    }else{
-      out.push({group:name,key:'x:'+label,num:null,label,matchName,hasNum:false});
-    }
+    const t=line.trim(); if(!t) continue;
+    const body=t.replace(/^[-–—•*\s]+/,'').trim();
+    const kw=ITEM_KW.find(k=>body.indexOf(k)>=0);
+    const nums=body.match(/\d{4,}/g)||[];
+    if(kw){                                   // שורת פריט
+      if(!cur){cur={name:'(ללא שם)',items:[]};people.push(cur)}
+      const id=nums[0]||null;
+      const label=cleanLabel(body)||kw;
+      const key=id?('id:'+id):('p'+(people.length-1)+':i'+cur.items.length);
+      cur.items.push({key,id,label,kw});
+    }else if(nums.length){                     // שורת שם של חייל
+      let name=body.replace(/\d{4,}/g,'').trim().replace(/[\s.\-–—:]+$/,'').trim();
+      cur={name:name||('חייל '+(++pn)),pn:nums[nums.length-1],items:[]};people.push(cur);
+    }                                          // אחרת = רעש, מדלגים
   }
-  return out;
+  return people.filter(p=>p.items.length);
 }
+function allItems(){return people.flatMap(p=>p.items)}
 
-/* ---------- התאמת דוח ---------- */
+/* ---------- התאמת דיווח ---------- */
 function nameInText(name,text){
   if(!name) return false;
   const isL=c=>new RegExp('[A-Za-z0-9'+HE+']').test(c||'');
   let i=text.indexOf(name);
-  while(i!==-1){
-    if(!isL(text[i-1])&&!isL(text[i+name.length])) return true;
-    i=text.indexOf(name,i+1);
-  }
+  while(i!==-1){if(!isL(text[i-1])&&!isL(text[i+name.length]))return true;i=text.indexOf(name,i+1)}
   return false;
 }
 function markReport(text){
-  const repNums=new Set(text.match(/\d{3,}/g)||[]);
+  const repNums=new Set(text.match(/\d{4,}/g)||[]);
   let fresh=0;
-  for(const u of units){
-    if(reported.has(u.key)) continue;
-    const hit = u.hasNum ? repNums.has(u.num) : nameInText(u.matchName,text);
-    if(hit){reported.add(u.key);fresh++}
+  for(const it of allItems()){
+    if(reported.has(it.key)) continue;
+    const hit = it.id ? repNums.has(it.id) : nameInText(it.kw,text);
+    if(hit){reported.add(it.key);fresh++}
   }
-  const known=new Set(units.filter(u=>u.hasNum).map(u=>u.num));
+  const known=new Set(allItems().filter(it=>it.id).map(it=>it.id));
+  people.forEach(p=>{if(p.pn)known.add(p.pn)});   // מספרים אישיים אינם "לא ברשימה"
   const unknown=[...repNums].filter(n=>!known.has(n));
   return {fresh,unknown};
 }
 
 /* ---------- צ'אט ---------- */
 function addMsg(who,html,store=true){
-  const m={who,html,t:now()};
-  if(store){chat.push(m);save()}
-  const el=document.createElement('div');el.className='msg '+who;
-  el.innerHTML=html+'<span class="t">'+m.t+'</span>';
+  const m={who,html,t:now()}; if(store){chat.push(m);save()}
+  const el=document.createElement('div');el.className='msg '+who;el.innerHTML=html+'<span class="t">'+m.t+'</span>';
   document.getElementById('chat').appendChild(el);scrollDown();
 }
 function scrollDown(){const c=document.getElementById('chat');c.scrollTop=c.scrollHeight}
-function renderChat(){
-  const c=document.getElementById('chat');c.innerHTML='';
-  for(const m of chat){const el=document.createElement('div');el.className='msg '+m.who;el.innerHTML=m.html+'<span class="t">'+m.t+'</span>';c.appendChild(el)}
-  scrollDown();
-}
-function doneCount(){return units.filter(u=>reported.has(u.key)).length}
+function renderChat(){const c=document.getElementById('chat');c.innerHTML='';for(const m of chat){const el=document.createElement('div');el.className='msg '+m.who;el.innerHTML=m.html+'<span class="t">'+m.t+'</span>';c.appendChild(el)}scrollDown()}
+function doneCount(){return allItems().filter(it=>reported.has(it.key)).length}
 
 function sendReport(){
-  const inp=document.getElementById('input');const text=inp.value.trim();
-  if(!text) return;
-  if(!units.length){addMsg('bot','אין רשימה. עבור ללשונית <b>הרשימה</b> והכנס את רשימת הצלם.');return}
+  const inp=document.getElementById('input');const text=inp.value.trim();if(!text)return;
+  if(!people.length){addMsg('bot','אין רשימה. עבור ללשונית <b>הרשימה</b> והכנס את רשימת הצלם.');return}
   addMsg('me',escapeHtml(text));inp.value='';inp.style.height='auto';
   const {fresh,unknown}=markReport(text);save();updateChip();renderTrack();
-  const done=doneCount();
+  const total=allItems().length, done=doneCount();
   let h = fresh ? '<span class="ok">✔️ סומנו '+fresh+' פריטים.</span>' : 'ℹ️ לא נמצא חדש בהודעה.';
-  h += '<br>סה"כ <b>'+done+'/'+units.length+'</b>.';
-  h += (done===units.length) ? '<br><span class="ok">✅ הכל דווח!</span>' : '<br>פתח <b>טבלה</b> לראות מה חסר.';
-  if(unknown.length) h+='<br><span class="unk">⚠️ מספרים שלא ברשימה: '+unknown.slice(0,15).map(escapeHtml).join(', ')+'</span>';
+  h += '<br>סה"כ <b>'+done+'/'+total+'</b> התקבלו.';
+  h += (done===total) ? '<br><span class="ok">✅ כל הפריטים התקבלו!</span>' : '<br>פתח <b>טבלה</b> לראות מה חסר (❌).';
+  if(unknown.length) h+='<br><span class="unk">⚠️ מספרים בהודעה שלא ברשימה: '+unknown.slice(0,15).map(escapeHtml).join(', ')+'</span>';
   addMsg('bot',h);
 }
 function newDay(){
-  if(!confirm('להתחיל יום חדש? כל הסימונים יימחקו (הרשימה נשארת).')) return;
+  if(!confirm('להתחיל יום חדש? כל הסימונים יימחקו (הרשימה נשארת).'))return;
   reported=new Set();save();updateChip();renderTrack();
-  addMsg('bot','<span class="ok">🔄 יום חדש.</span> ממתין לדיווח על '+units.length+' פריטים.');
+  addMsg('bot','<span class="ok">🔄 יום חדש.</span> ממתין לדיווחים.');
 }
 
-/* ---------- טבלת מעקב (לפי שם) ---------- */
+/* ---------- טבלה ---------- */
 function renderTrack(){
   const box=document.getElementById('track');
-  if(!units.length){box.innerHTML='<div class="tnote">אין רשימה. עבור ללשונית "הרשימה" והכנס את הצלם.</div>';return}
-  // קיבוץ לפי שם, בסדר ההופעה
-  const order=[],map={};
-  units.forEach((u,i)=>{
-    if(!(u.group in map)){map[u.group]=order.length;order.push({name:u.group,rows:[]})}
-    order[map[u.group]].rows.push({u,i});
-  });
-  let html='<div class="tnote">טבלה לפי שם — מתחת לכל שם כל מספרי הצלם שלו. ✅=דווח, ⬜=חסר. לחיצה מסמנת/מבטלת ידנית.<br>סומנו '+doneCount()+' מתוך '+units.length+'.</div>';
-  for(const g of order){
-    const gd=g.rows.filter(r=>reported.has(r.u.key)).length, gt=g.rows.length;
-    html+='<div class="grp"><div class="gh '+(gd===gt?'full':'')+'">'+escapeHtml(g.name)+'<span class="gc">'+gd+'/'+gt+'</span></div>';
-    for(const r of g.rows){
-      const d=reported.has(r.u.key);
-      const txt = r.u.hasNum ? r.u.num : '<span class="sub">ללא מספר — סמן ידנית</span>';
-      html+='<div class="unit '+(d?'done':'')+'" data-i="'+r.i+'"><span class="box">'+(d?'✅':'⬜')+'</span><span class="num">'+txt+'</span></div>';
-    }
+  if(!people.length){box.innerHTML='<div class="tnote">אין רשימה. עבור ללשונית "הרשימה" והכנס את הצלם.</div>';return}
+  let html='<div class="tnote">טבלה לפי אנשים. ✓ = התקבל בהודעה, ❌ = לא התקבל. לחיצה על פריט מסמנת/מבטלת ידנית.<br>התקבלו '+doneCount()+' מתוך '+allItems().length+'.</div>';
+  people.forEach((p,pi)=>{
+    const gt=p.items.length, gd=p.items.filter(it=>reported.has(it.key)).length;
+    html+='<div class="grp"><div class="gh '+(gd===gt?'full':'')+'">'+escapeHtml(p.name)+'<span class="gc">'+gd+'/'+gt+'</span></div>';
+    p.items.forEach((it,ii)=>{
+      const d=reported.has(it.key);
+      html+='<div class="unit '+(d?'done':'miss')+'" data-p="'+pi+'" data-i="'+ii+'">'
+          +'<span class="box">'+(d?'✅':'❌')+'</span>'
+          +'<span class="lbl">'+escapeHtml(it.label)+'</span>'
+          +(it.id?'<span class="id">'+escapeHtml(it.id)+'</span>':'')+'</div>';
+    });
     html+='</div>';
-  }
+  });
   box.innerHTML=html;
 }
 document.getElementById('track').addEventListener('click',e=>{
   const row=e.target.closest('.unit'); if(!row) return;
-  const u=units[+row.dataset.i]; if(!u) return;
-  if(reported.has(u.key)) reported.delete(u.key); else reported.add(u.key);
+  const it=people[+row.dataset.p].items[+row.dataset.i]; if(!it) return;
+  if(reported.has(it.key)) reported.delete(it.key); else reported.add(it.key);
   save();updateChip();renderTrack();
 });
 
 /* ---------- רשימה ---------- */
-function updateListCount(){document.getElementById('listCount').textContent=buildUnits(document.getElementById('listText').value).length+' פריטים';}
+function updateListCount(){const m=buildModel(document.getElementById('listText').value);document.getElementById('listCount').textContent=m.length+' אנשים · '+m.flatMap(p=>p.items).length+' פריטים';}
 function saveList(){
   rawList=document.getElementById('listText').value;
-  const nu=buildUnits(rawList);
-  if(!nu.length){toast('הרשימה ריקה');return}
-  const keys=new Set(nu.map(u=>u.key));
+  const np=buildModel(rawList);
+  if(!np.length){toast('הרשימה ריקה');return}
+  const keys=new Set(np.flatMap(p=>p.items).map(it=>it.key));
   reported=new Set([...reported].filter(k=>keys.has(k)));
-  units=nu;save();updateChip();renderTrack();
-  toast('נשמרו '+units.length+' פריטים ✓');
-  addMsg('bot','<span class="ok">💾 נטענה רשימה:</span> '+units.length+' פריטים.');
+  people=np;save();updateChip();renderTrack();
+  toast('נשמרו '+people.length+' אנשים ✓');
+  addMsg('bot','<span class="ok">💾 נטענה רשימה:</span> '+people.length+' אנשים, '+allItems().length+' פריטים.');
   showTab('track');
 }
 
 /* ---------- ניווט ---------- */
 function showTab(t){
-  document.getElementById('chat').classList.toggle('on',t==='chat');
-  document.getElementById('track').classList.toggle('on',t==='track');
-  document.getElementById('list').classList.toggle('on',t==='list');
+  ['chat','track','list'].forEach(v=>document.getElementById(v).classList.toggle('on',t===v));
   document.getElementById('tabChat').classList.toggle('on',t==='chat');
   document.getElementById('tabTrack').classList.toggle('on',t==='track');
   document.getElementById('tabList').classList.toggle('on',t==='list');
   const show=t==='chat'?'flex':'none';
-  document.getElementById('quick').style.display=show;
-  document.getElementById('composer').style.display=show;
-  if(t==='track') renderTrack();
+  document.getElementById('quick').style.display=show;document.getElementById('composer').style.display=show;
+  if(t==='track')renderTrack();
   if(t==='list'){document.getElementById('listText').value=rawList;updateListCount()}
-  if(t==='chat') scrollDown();
+  if(t==='chat')scrollDown();
 }
 
 /* ---------- כללי ---------- */
 function updateChip(){
-  const c=document.getElementById('chip');
-  if(!units.length){c.textContent='אין רשימה';c.className='chip';return}
-  const done=doneCount();
-  c.innerHTML='<b>'+done+'</b> / '+units.length;
-  c.className='chip '+(done===units.length?'':'partial');
+  const c=document.getElementById('chip');const total=allItems().length;
+  if(!total){c.textContent='אין רשימה';c.className='chip';return}
+  const done=doneCount();c.innerHTML='<b>'+done+'</b> / '+total;c.className='chip '+(done===total?'':'partial');
 }
 let toastT;
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1800)}
@@ -298,9 +263,7 @@ inp.addEventListener('input',()=>{inp.style.height='auto';inp.style.height=Math.
 document.getElementById('listText').addEventListener('input',updateListCount);
 
 updateChip();
-if(!chat.length){
-  addMsg('bot','שלום! 👋<br>1. בלשונית <b>הרשימה</b> הכנס את רשימת הצלם (פריט בכל שורה).<br>2. כאן הדבק כל דוח שמגיע — אני מסמן לפי המספרים.<br>3. בלשונית <b>טבלה</b> תראה כל שם עם מספרי הצלם שלו ו-✅/⬜.',true);
-}
+if(!chat.length){addMsg('bot','שלום! 👋<br>1. בלשונית <b>הרשימה</b> הכנס את רשימת הצלם לפי אנשים.<br>2. כאן הדבק כל דיווח של חייל — אני מסמן ✓ לפי המספרים.<br>3. בלשונית <b>טבלה</b> תראה כל חייל עם ✓ ליד מה שהתקבל ו-❌ ליד מה שחסר.',true)}
 renderChat();renderTrack();
 </script>
 </body>
