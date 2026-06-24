@@ -103,35 +103,52 @@ function nameInText(name,text){
   return false;
 }
 function markReport(text){
-  const rep=new Set(nums3(text));
-  // למי שייך הדיווח: לפי מספר אישי / מספר צלם שמופיע / שם
-  const targets=people.filter(p =>
-    (p.pn && rep.has(p.pn)) ||
-    p.items.some(it=>it.serial && rep.has(it.serial)) ||
-    (p.name && nameInText(p.name,text))
-  );
-  const scoped = targets.length ? targets : null;
-  const summary=[];
-  if(scoped){
-    // דיווח של חייל = התמונה המלאה שלו: מאפסים את כל הפריטים שלו ומסמנים רק את מה שדווח
-    for(const p of scoped){
+  // מפות בעלות: מספר צלם -> חייל, מספר אישי -> חייל
+  const serialOwner={}, pnOwner={};
+  people.forEach((p,i)=>{
+    if(p.pn) pnOwner[p.pn]=i;
+    p.items.forEach(it=>{ if(it.serial) serialOwner[it.serial]=i; });
+  });
+  // האם השורה היא כותרת של חייל (לפי מספר אישי או שם)? מחזיר אינדקס או -1
+  function headerSoldier(line){
+    const ns=line.match(/\d{4,}/g)||[];
+    for(const n of ns){ if(n in pnOwner) return pnOwner[n]; }
+    for(let i=0;i<people.length;i++){ const nm=(people[i].name||'').trim(); if(nm.length>=2 && nameInText(nm,line)) return i; }
+    return -1;
+  }
+  // פיצול הדיווח לבלוקים לפי חייל — כל שורה שייכת לחייל שמעליה עד השם הבא
+  const bySoldier={}; let cur=-1;
+  for(const line of text.split('\n')){
+    const si=headerSoldier(line);
+    if(si!==-1) cur=si;
+    if(cur!==-1) bySoldier[cur]=(bySoldier[cur]||'')+line+'\n';
+  }
+  const ids=Object.keys(bySoldier);
+  const summary=[], warnings=[], unknown=[];
+  if(ids.length){
+    for(const si of ids){
+      const p=people[si], bt=bySoldier[si];
+      const bset=new Set(bt.match(/\d{3,}/g)||[]);
       let done=0;
-      for(const it of p.items){
-        const hit = it.serial ? rep.has(it.serial) : nameInText(it.item,text);
-        it.reported = hit;                                  // כן/לא — לפי הדיווח הנוכחי בלבד
-        if(hit) done++;
+      for(const it of p.items){                            // התמונה המלאה של החייל בבלוק שלו
+        const hit = it.serial ? bset.has(it.serial) : nameInText(it.item,bt);
+        it.reported=hit; if(hit)done++;
       }
       summary.push({name:p.name||'חייל',done,total:p.items.length});
+      for(const n of bset){                                // אזהרות על מספרים בבלוק הזה
+        if(n in pnOwner) continue;
+        if(!(n in serialOwner)) unknown.push(n);
+        else if(+serialOwner[n]!==+si) warnings.push(n+' שייך ל'+(people[serialOwner[n]].name||'חייל אחר'));
+      }
     }
   }else{
-    // לא זוהה חייל — לא מאפסים. מסמנים רק לפי מספר צלם שמופיע (בטוח, ייחודי)
-    for(const p of people) for(const it of p.items)
-      if(!it.reported && it.serial && rep.has(it.serial)) it.reported=true;
+    // לא זוהה אף חייל — לא מאפסים; מסמנים רק לפי מספר צלם ומתריעים על לא-מוכרים
+    for(const n of (text.match(/\d{3,}/g)||[])){
+      if(n in serialOwner){ const it=people[serialOwner[n]].items.find(x=>x.serial===n); if(it)it.reported=true; }
+      else if(!(n in pnOwner)) unknown.push(n);
+    }
   }
-  const known=new Set(allItems().filter(it=>it.serial).map(it=>it.serial));
-  people.forEach(p=>{if(p.pn)known.add(p.pn)});
-  const unknown=[...rep].filter(n=>!known.has(n));
-  return {scoped:!!scoped,summary,unknown};
+  return {scoped:ids.length>0, summary, warnings, unknown:[...new Set(unknown)]};
 }
 
 /* ---------- צ'אט ---------- */
@@ -147,7 +164,7 @@ function sendReport(){
   const inp=document.getElementById('input');const text=inp.value.trim();if(!text)return;
   if(!allItems().length){addMsg('bot','אין רשימה עדיין. עבור ללשונית <b>טבלה</b> והכנס אנשים ופריטים (או "ייבוא מהיר").');return}
   addMsg('me',escapeHtml(text));inp.value='';inp.style.height='auto';
-  const {scoped,summary,unknown}=markReport(text);save();updateChip();
+  const {scoped,summary,warnings,unknown}=markReport(text);save();updateChip();
   const {total,done}=counts();
   let h='';
   if(scoped){
@@ -158,6 +175,7 @@ function sendReport(){
     h+='<span class="unk">⚠️ לא זיהיתי חייל מהדיווח. ודא שהוא כולל שם / מספר אישי / מספר צלם של החייל.</span>';
   }
   h+='<br>סה"כ <b>'+done+'/'+total+'</b> אצל החיילים.';
+  if(warnings&&warnings.length) h+='<br><span class="unk">⚠️ מספר אצל החייל הלא נכון: '+warnings.slice(0,15).map(escapeHtml).join('; ')+'</span>';
   if(unknown.length) h+='<br><span class="unk">⚠️ מספרים שלא ברשימה: '+unknown.slice(0,15).map(escapeHtml).join(', ')+'</span>';
   addMsg('bot',h);renderTable();
 }
